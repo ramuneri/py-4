@@ -1,14 +1,12 @@
 #include <Python.h>
 
-static PyObject* fib(PyObject* self, PyObject* args) {
+static PyObject* fiba(PyObject* self, PyObject* args) {
     int n;
     
-    // Parse the input argument
     if (!PyArg_ParseTuple(args, "i", &n)) {
         return NULL;
     }
     
-    // Compute the Fibonacci number
     int a = 0, b = 1, next;
     if (n == 0) return PyLong_FromLong(a);
     if (n == 1) return PyLong_FromLong(b);
@@ -22,16 +20,14 @@ static PyObject* fib(PyObject* self, PyObject* args) {
     return PyLong_FromLong(b);
 }
 
-// Method definition
 static PyMethodDef FibonacciMethods[] = {
-    {"fib", fib, METH_VARARGS, "Compute nth Fibonacci number"},
+    {"fiba", fiba, METH_VARARGS, "Compute nth Fibonacci number"},
     {NULL, NULL, 0, NULL}
 };
 
-// Module definition
 static struct PyModuleDef fibmodule = {
     PyModuleDef_HEAD_INIT,
-    "fib",   // Module name
+    "fiba",   // Module name
     "Fibonacci number calculation extension", // Docstring
     -1, // Size of per-interpreter state
     FibonacciMethods

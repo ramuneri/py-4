@@ -1,6 +1,9 @@
-# test_fib.py
 import fib
 
-# Test Fibonacci function
-print(fib.fib(5))  # Should output 5
-print(fib.fib(10)) # Should output 55
+print(fib.fib(0)) # 0
+print(fib.fib(1)) # 1
+print(fib.fib(2)) # 1
+print(fib.fib(3)) # 2
+print(fib.fib(4)) # 3
+print(fib.fib(5))  # 5
+print(fib.fib(10)) # 55
