@@ -1,12 +1,11 @@
 from setuptools import setup, Extension
 
-# Fibonacci extension module
+# Extension modules
 fib_module = Extension(
     name='fib',
     sources=['fib.c']
 )
 
-# Triangle (geometry) extension module
 geometry_module = Extension(
     name='geometry',
     sources=['triangle.c']

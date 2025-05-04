@@ -9,11 +9,11 @@ print(fib.fib(5))  # 5
 print(fib.fib(10)) # 55
 
 try:
-    print(fib.fib(-5))  # ValueError
+    print(fib.fib(-5))
 except Exception as e:
     print(f"Error: {e}")  # "Fibonacci number cannot be negative."
 
 try:
-    print(fib.fib("hello"))  # TypeError
+    print(fib.fib("hello"))
 except Exception as e:
     print(f"Error: {e}")  #"Argument must be an integer."

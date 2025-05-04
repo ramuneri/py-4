@@ -1,20 +1,18 @@
 #include <Python.h>
 #include <math.h>
 
-// Triangle object struct
 typedef struct {
     PyObject_HEAD
     double a, b, c;
 } Triangle;
 
-// Deallocation
+
 static void
 Triangle_dealloc(Triangle* self)
 {
     Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
-// tp_new
 static PyObject *
 Triangle_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
@@ -25,7 +23,6 @@ Triangle_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     return (PyObject*)self;
 }
 
-// tp_init
 static int
 Triangle_init(Triangle *self, PyObject *args, PyObject *kwds)
 {
@@ -36,7 +33,7 @@ Triangle_init(Triangle *self, PyObject *args, PyObject *kwds)
     return 0;
 }
 
-// area method
+
 static PyObject*
 Triangle_area(Triangle* self, PyObject *Py_UNUSED(ignored))
 {
@@ -45,7 +42,6 @@ Triangle_area(Triangle* self, PyObject *Py_UNUSED(ignored))
     return PyFloat_FromDouble(area);
 }
 
-// perimeter method
 static PyObject*
 Triangle_perimeter(Triangle* self, PyObject *Py_UNUSED(ignored))
 {
@@ -53,14 +49,14 @@ Triangle_perimeter(Triangle* self, PyObject *Py_UNUSED(ignored))
     return PyFloat_FromDouble(p);
 }
 
-// methods table
+
 static PyMethodDef Triangle_methods[] = {
     {"area",      (PyCFunction)Triangle_area,      METH_NOARGS,  "Return triangle area"},
     {"perimeter", (PyCFunction)Triangle_perimeter, METH_NOARGS,  "Return triangle perimeter"},
     {NULL}
 };
 
-// type object
+
 static PyTypeObject TriangleType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name      = "geometry.Triangle",
@@ -77,7 +73,7 @@ static PyTypeObject TriangleType = {
     .tp_new       = Triangle_new,
 };
 
-// module definition
+
 static PyModuleDef geometrymodule = {
     PyModuleDef_HEAD_INIT,
     .m_name    = "geometry",
@@ -85,7 +81,7 @@ static PyModuleDef geometrymodule = {
     .m_size    = -1,
 };
 
-// module init
+
 PyMODINIT_FUNC
 PyInit_geometry(void)
 {
