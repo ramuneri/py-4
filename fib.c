@@ -3,13 +3,20 @@
 // Function to calculate the nth Fibonacci number
 static PyObject* fib(PyObject* self, PyObject* args) {
     int n;
-    
+
     // Parse the input argument as an integer
     if (!PyArg_ParseTuple(args, "i", &n)) {
-        return NULL;  // Return NULL if parsing fails
+        PyErr_SetString(PyExc_TypeError, "Argument must be an integer.");
+        return NULL;
     }
-    
-    // Basic Fibonacci logic
+
+    // Check for negative input
+    if (n < 0) {
+        PyErr_SetString(PyExc_ValueError, "Fibonacci number cannot be negative.");
+        return NULL;
+    }
+
+    // Fibonacci logic
     int a = 0, b = 1, next;
     if (n == 0) return PyLong_FromLong(a);
     if (n == 1) return PyLong_FromLong(b);
@@ -23,7 +30,7 @@ static PyObject* fib(PyObject* self, PyObject* args) {
     return PyLong_FromLong(b);  // Return the nth Fibonacci number
 }
 
-// Define the methods in the module
+// Define the methods for the Fibonacci module
 static PyMethodDef FibonacciMethods[] = {
     {"fib", fib, METH_VARARGS, "Compute nth Fibonacci number"},
     {NULL, NULL, 0, NULL}  // End of methods
@@ -33,7 +40,7 @@ static PyMethodDef FibonacciMethods[] = {
 static struct PyModuleDef fibmodule = {
     PyModuleDef_HEAD_INIT,
     "fib",      // Module name
-    "Fibonacci number calculation extension",  // Description
+    "Fibonacci number calculation extension",  // Module description
     -1,         // Keep the module alive
     FibonacciMethods
 };

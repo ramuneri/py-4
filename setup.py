@@ -1,18 +1,20 @@
-from setuptools import setup, Extension  # Use setuptools instead of distutils
+from setuptools import setup, Extension
 
-# C extension modules
-fib_module = Extension('fib', sources=['fib.c'])
-triangle_module = Extension('geometry', sources=['triangle.c'])
+# Fibonacci extension module
+fib_module = Extension(
+    name='fib',
+    sources=['fib.c']
+)
 
-# Setup function to build and install the module
+# Triangle (geometry) extension module
+geometry_module = Extension(
+    name='geometry',
+    sources=['triangle.c']
+)
+
 setup(
     name='Extensions',
     version='1.0',
-    description='Fibonacci and triangle calculation extension',
-    long_description="This package provides C extensions for calculating Fibonacci numbers and properties of triangles (area and perimeter).",
-    ext_modules=[fib_module, triangle_module],
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-    ],
+    description='C extensions for Fibonacci and Triangle',
+    ext_modules=[fib_module, geometry_module],
 )
