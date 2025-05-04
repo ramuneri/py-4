@@ -7,11 +7,11 @@ typedef struct {
 } Triangle;
 
 
-static void
 Triangle_dealloc(Triangle* self)
 {
     Py_TYPE(self)->tp_free((PyObject*)self);
 }
+
 
 static PyObject *
 Triangle_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
@@ -22,6 +22,7 @@ Triangle_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     }
     return (PyObject*)self;
 }
+
 
 static int
 Triangle_init(Triangle *self, PyObject *args, PyObject *kwds)
@@ -42,6 +43,7 @@ Triangle_area(Triangle* self, PyObject *Py_UNUSED(ignored))
     return PyFloat_FromDouble(area);
 }
 
+
 static PyObject*
 Triangle_perimeter(Triangle* self, PyObject *Py_UNUSED(ignored))
 {
@@ -50,12 +52,46 @@ Triangle_perimeter(Triangle* self, PyObject *Py_UNUSED(ignored))
 }
 
 
+Triangle_square(PyObject *self, PyObject *args)
+{
+    double v;
+    if (!PyArg_ParseTuple(args, "d", &v))
+        return NULL;
+
+    PyObject *mod = PyImport_ImportModule("embed");
+    if (!mod) {
+        PyErr_Print();
+        return NULL;
+    }
+    
+    PyObject *func = PyObject_GetAttrString(mod, "square");
+    Py_DECREF(mod);
+    if (!func || !PyCallable_Check(func)) {
+        Py_XDECREF(func);
+        PyErr_SetString(PyExc_AttributeError, "module 'embed' has no attribute 'square'");
+        return NULL;
+    }
+
+    PyObject *arg = Py_BuildValue("(d)", v);
+    PyObject *res = PyObject_CallObject(func, arg);
+    Py_DECREF(arg);
+    Py_DECREF(func);
+    if (!res) {
+        PyErr_Print();
+        return NULL;
+    }
+
+    double d = PyFloat_AsDouble(res);
+    Py_DECREF(res);
+    return PyFloat_FromDouble(d);
+}
+
 static PyMethodDef Triangle_methods[] = {
     {"area",      (PyCFunction)Triangle_area,      METH_NOARGS,  "Return triangle area"},
     {"perimeter", (PyCFunction)Triangle_perimeter, METH_NOARGS,  "Return triangle perimeter"},
+    {"square",    (PyCFunction)Triangle_square,    METH_VARARGS, "Return square of a number via embedded Python function"},
     {NULL}
 };
-
 
 static PyTypeObject TriangleType = {
     PyVarObject_HEAD_INIT(NULL, 0)
@@ -64,23 +100,18 @@ static PyTypeObject TriangleType = {
     .tp_itemsize  = 0,
     .tp_dealloc   = (destructor)Triangle_dealloc,
     .tp_flags     = Py_TPFLAGS_DEFAULT,
-    .tp_doc       = "Triangle(a, b, c)\n\n"
-                    "Methods:\n"
-                    "  area()      -- returns area\n"
-                    "  perimeter() -- returns perimeter\n",
+    .tp_doc       = "Triangle(a, b, c)\n\nCreate a triangle and compute its area and perimeter.\nMethods:\n  area()      -- returns area\n  perimeter() -- returns perimeter\n  square(x)   -- returns x*x via Python embed",
     .tp_methods   = Triangle_methods,
     .tp_init      = (initproc)Triangle_init,
     .tp_new       = Triangle_new,
 };
 
-
-static PyModuleDef geometrymodule = {
+static struct PyModuleDef geometrymodule = {
     PyModuleDef_HEAD_INIT,
     .m_name    = "geometry",
-    .m_doc     = "Module that defines a Triangle type.",
+    .m_doc     = "Module that defines a Triangle type and embeds a Python function.",
     .m_size    = -1,
 };
-
 
 PyMODINIT_FUNC
 PyInit_geometry(void)
@@ -90,7 +121,8 @@ PyInit_geometry(void)
         return NULL;
 
     m = PyModule_Create(&geometrymodule);
-    if (!m) return NULL;
+    if (!m)
+        return NULL;
 
     Py_INCREF(&TriangleType);
     if (PyModule_AddObject(m, "Triangle", (PyObject *)&TriangleType) < 0) {
